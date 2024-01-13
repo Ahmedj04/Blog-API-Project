@@ -36,7 +36,7 @@ Follow these steps to start the project:
 3. **Install Dependencies:**
 
     ```bash
-    # npm i
+     npm i
     ```
 
 4. **Start the Servers:**
