@@ -72,33 +72,50 @@ app.post('/posts', (req, res) => {
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
 app.patch("/posts/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const currentIndex = posts.findIndex(post => post.id == id)
-  const existingPost = posts.find(post => post.id == id)
-  const updatedPost = {
-    id: id,
-    title: req.body.title || existingPost.title,
-    content: req.body.content || existingPost.content,
-    author: req.body.author || existingPost.author,
-    date: new Date(),
-  }
+  const post = posts.find((p) => p.id === parseInt(req.params.id));
+  if (!post) return res.status(404).json({ message: "Post not found" });
 
-  posts[currentIndex] = updatedPost
-  res.status(200).json(posts)
+  // Update post attributes if they exist in the request body
+  // Update post title if 'title' property is present in the request body
+  if (req.body.title) post.title = req.body.title;
+
+  // Update post content if 'content' property is present in the request body
+  if (req.body.content) post.content = req.body.content;
+
+  // Update post author if 'author' property is present in the request body
+  if (req.body.author) post.author = req.body.author;
+
+  res.json(post);
+
+  // or we can do this like this also
+  // const id = parseInt(req.params.id);
+  // const currentIndex = posts.findIndex(post => post.id == id)
+  // const existingPost = posts.find(post => post.id == id)
+  // const updatedPost = {
+  //   id: id,
+  //   title: req.body.title || existingPost.title,
+  //   content: req.body.content || existingPost.content,
+  //   author: req.body.author || existingPost.author,
+  //   date: new Date(),
+  // }
+  // posts[currentIndex] = updatedPost
+  // res.status(200).json(posts)
 
 })
 
 //CHALLENGE 5: DELETE a specific post by providing the post id.
 app.delete("/posts/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const currentIndex = posts.findIndex(post => post.id == id)
-  if (currentIndex > -1) {
-    posts.splice(currentIndex, 1)
-    res.status(200).json("post deleted")
-  } else {
-    res.status(404).json({ message: "Post not found" })
+  // Find the index of the post in the array based on the ID from the request parameters
+  const index = posts.findIndex((p) => p.id === parseInt(req.params.id));
 
-  }
+  // If the post with the specified ID is not found, findIndex method returns a -1 and then send a 404 response
+  if (index === -1) return res.status(404).json({ message: "Post not found" });
+
+  // Remove the post from the array using splice (remove 1 element starting from the found index)
+  posts.splice(index, 1);
+
+  // Respond with a JSON object indicating that the post was successfully deleted
+  res.json({ message: "Post deleted" });
 })
 
 
